@@ -45,6 +45,7 @@ extension AsyncSequence {
     chunked(by: signal, into: [Element].self)
   }
 
+#if !hasFeature(Embedded)  // AsyncTimerSequence is unavailable in Embedded Swift (khasm embedded-wasm port)
   /// Creates an asynchronous sequence that creates chunks of a given `RangeReplaceableCollection` type of a given count or when an `AsyncTimerSequence` fires.
   @available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *)
   public func chunks<C: Clock, Collected: RangeReplaceableCollection>(
@@ -80,6 +81,7 @@ extension AsyncSequence {
   ) -> AsyncChunksOfCountOrSignalSequence<Self, [Element], AsyncTimerSequence<C>> {
     chunked(by: timer, into: [Element].self)
   }
+#endif  // !hasFeature(Embedded)
 }
 
 /// An `AsyncSequence` that chunks elements into collected `RangeReplaceableCollection` instances by either count or a signal from another `AsyncSequence`.
