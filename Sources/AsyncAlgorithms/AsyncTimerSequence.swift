@@ -9,6 +9,7 @@
 //
 //===----------------------------------------------------------------------===//
 
+#if !hasFeature(Embedded)  // ContinuousClock/SuspendingClock are unavailable in Embedded Swift (khasm embedded-wasm port)
 /// An `AsyncSequence` that produces elements at regular intervals.
 @available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *)
 public struct AsyncTimerSequence<C: Clock>: AsyncSequence {
@@ -89,3 +90,4 @@ extension AsyncTimerSequence: Sendable {}
 
 @available(*, unavailable)
 extension AsyncTimerSequence.Iterator: Sendable {}
+#endif  // !hasFeature(Embedded)

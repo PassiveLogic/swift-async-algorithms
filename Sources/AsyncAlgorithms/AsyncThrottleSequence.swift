@@ -9,6 +9,7 @@
 //
 //===----------------------------------------------------------------------===//
 
+#if !hasFeature(Embedded)  // ContinuousClock/SuspendingClock are unavailable in Embedded Swift (khasm embedded-wasm port)
 @available(AsyncAlgorithms 1.0, *)
 extension AsyncSequence {
   /// Create a rate-limited `AsyncSequence` by emitting values at most every specified interval.
@@ -138,3 +139,4 @@ extension _AsyncThrottleSequence: Sendable where Base: Sendable, Element: Sendab
 
 @available(*, unavailable)
 extension _AsyncThrottleSequence.Iterator: Sendable {}
+#endif  // !hasFeature(Embedded)

@@ -113,7 +113,12 @@ internal struct _AsyncBytesBuffer {
     if finished {
       return nil
     }
+    #if hasFeature(Embedded)
+    // Task.checkCancellation() is unavailable in Embedded Swift; equivalent inline check.
+    if Task.isCancelled { throw CancellationError() }
+    #else
     try Task.checkCancellation()
+    #endif
     do {
       let readSize: Int = try await readFunction(storage.buffer)
       if readSize == 0 {
