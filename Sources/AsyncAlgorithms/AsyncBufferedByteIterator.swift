@@ -63,6 +63,19 @@ public struct AsyncBufferedByteIterator: AsyncIteratorProtocol {
   public mutating func next() async throws -> UInt8? {
     return try await buffer.next()
   }
+
+  #if hasFeature(Embedded)
+  /// Embedded Swift: the stdlib's default `next(isolation:)` witness casts
+  /// `any Error` to `Self.Failure` (a dynamic cast, forbidden in Embedded), so
+  /// an explicit witness is required for the module to compile. Calling the
+  /// buffer from an isolated context would be a cross-isolation send of the
+  /// non-Sendable buffer, so this witness traps instead — use `next()`.
+  /// (Documented behaviorally-lossy embedded no-op; nothing in the khasm
+  /// embedded graph iterates byte buffers through the typed-throws entry.)
+  public mutating func next(isolation actor: isolated (any Actor)?) async throws(any Error) -> UInt8? {
+    fatalError("AsyncBufferedByteIterator.next(isolation:) is unsupported under Embedded Swift; use next()")
+  }
+  #endif
 }
 
 @available(*, unavailable)

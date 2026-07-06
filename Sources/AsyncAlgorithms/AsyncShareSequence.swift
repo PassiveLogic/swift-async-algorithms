@@ -9,6 +9,7 @@
 //
 //===----------------------------------------------------------------------===//
 
+#if !hasFeature(Embedded)  // typed-throws force-casts (error as! Failure) are dynamic casts to a generic parameter, forbidden in Embedded Swift; QSC/khasm do not use this API (khasm embedded-wasm port)
 #if compiler(>=6.2)
 
 import Synchronization
@@ -724,3 +725,4 @@ extension AsyncShareSequence: AsyncSequence {
 }
 
 #endif
+#endif  // !hasFeature(Embedded)

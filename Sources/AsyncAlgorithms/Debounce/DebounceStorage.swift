@@ -273,10 +273,15 @@ final class DebounceStorage<Base: AsyncSequence & Sendable, C: Clock>: Sendable 
               // The only error that we expect is the `CancellationError`
               // thrown from the Clock.sleep or from the withUnsafeContinuation.
               // This happens if we are cleaning everything up. We can just drop that error and break our loop
+              #if !hasFeature(Embedded)
               precondition(
                 error is CancellationError,
                 "Received unexpected error \(error) in the Clock loop"
               )
+              #endif
+              // (Embedded Swift: the `is` check is a dynamic cast and the any-Error
+              // interpolation needs reflection — the precondition is debug-only
+              // documentation; the loop break is unchanged.)
               break loop
             }
           }

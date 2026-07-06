@@ -9,6 +9,7 @@
 //
 //===----------------------------------------------------------------------===//
 
+#if !hasFeature(Embedded)  // typed-throws force-casts (error as! Failure) are dynamic casts to a generic parameter, forbidden in Embedded Swift; QSC/khasm do not use this API (khasm embedded-wasm port)
 #if compiler(>=6.1)
 /// An error that is thrown from the various `send` methods of the
 /// ``MultiProducerSingleConsumerAsyncChannel/Source``.
@@ -725,3 +726,4 @@ extension MultiProducerSingleConsumerAsyncChannel.ChannelAsyncSequence where Ele
 @available(AsyncAlgorithms 1.1, *)
 extension MultiProducerSingleConsumerAsyncChannel.ChannelAsyncSequence: Sendable {}
 #endif
+#endif  // !hasFeature(Embedded)

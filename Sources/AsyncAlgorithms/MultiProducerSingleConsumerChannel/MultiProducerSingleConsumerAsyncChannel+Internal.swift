@@ -9,6 +9,7 @@
 //
 //===----------------------------------------------------------------------===//
 
+#if !hasFeature(Embedded)  // typed-throws force-casts (error as! Failure) are dynamic casts to a generic parameter, forbidden in Embedded Swift; QSC/khasm do not use this API (khasm embedded-wasm port)
 #if compiler(>=6.1)
 import DequeModule
 import Synchronization
@@ -1723,7 +1724,10 @@ enum _MultiProducerSingleConsumerSuspendedProducer {
 extension Optional where Wrapped: ~Copyable {
   @usableFromInline
   mutating func takeSending() -> sending Self {
-    let result = consume self
+    // nonisolated(unsafe): the value is consumed out of self and self is reset,
+    // so no alias can remain — silences a 6.5-dev region-isolation false
+    // positive that only fires under WMO (Embedded) builds.
+    nonisolated(unsafe) let result = consume self
     self = nil
     return result
   }
@@ -1745,3 +1749,4 @@ struct SendableConsumeOnceBox<Wrapped> {
   }
 }
 #endif
+#endif  // !hasFeature(Embedded)

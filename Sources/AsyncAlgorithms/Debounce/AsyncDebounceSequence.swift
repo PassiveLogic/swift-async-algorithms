@@ -22,6 +22,7 @@ extension AsyncSequence {
     AsyncDebounceSequence(self, interval: interval, tolerance: tolerance, clock: clock)
   }
 
+  #if !hasFeature(Embedded)  // ContinuousClock is unavailable in Embedded Swift (khasm embedded-wasm port)
   /// Creates an asynchronous sequence that emits the latest element after a given quiescence period
   /// has elapsed.
   @available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *)
@@ -31,6 +32,7 @@ extension AsyncSequence {
   ) -> AsyncDebounceSequence<Self, ContinuousClock> where Self: Sendable, Self.Element: Sendable {
     self.debounce(for: interval, tolerance: tolerance, clock: .continuous)
   }
+  #endif
 }
 
 /// An `AsyncSequence` that emits the latest element after a given quiescence period
